@@ -1,0 +1,26 @@
+import dataModel.Purchase;
+import dataModel.PotentialCustomer;
+import dataModel.PaymentMethods;
+import service.EmailService;
+
+
+global org.slf4j.Logger logger;
+
+rule "Identify potential customers"
+    when 
+        $p: Purchase(subTotal>=300, paymentMethod=PaymentMethods.CASH)
+    then
+        logger.info("Potential Customer found");
+        PotentialCustomer pc = new PotentialCustomer($p.getCustomerName(), $p.getSubTotal()*0.8);
+        insert(pc);
+end
+
+rule "Send an email offer to potential customers with credit limit lower or equal than $500"
+    when
+        $p:PotentialCustomer(subTotal<=500);
+    then
+        EmailService emailService = EmailService.getInstance();
+        emailService.sendCreditCardOffer($p);
+        logger.info("Sending cardit card offer");
+end
+

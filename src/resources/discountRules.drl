@@ -1,0 +1,28 @@
+import dataModel.*;
+import org.slf4j.Logger;
+
+global Logger logger;
+
+rule "Cash purchases have no discount"
+    when 
+        $p: Purchase(paymentMethod==PaymentMethods.CASH)
+    then
+        $p.setDiscount(0);
+            logger.info("\t==> Executing RULE 'Cash purchases have no discount' for Object : " +$p);
+end
+
+rule "Debit Card purchases have 5% of discount"
+    when
+        $p: Purchase(paymentMethod==PaymentMethods.DEBIT)
+    then
+        $p.setDiscount(0.05)
+            logger.info("\t==> Executing RULE 'Debit Card purchases have 5% of discount' for Object : " +$p);
+end
+
+rule "Credit Card purchases have 10% of Subtotal"
+    when
+        $p: Purchase(paymentMethod=PaymentMethods.CREDIT)
+    then
+        $p.setDiscount(0.1);
+            logger.info("\t==> Executing RULE 'Credit Card purchases have 10% of Subtotal' for Object : " +$p);
+end
